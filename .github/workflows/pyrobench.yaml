@@ -1,0 +1,19 @@
+on: issue_comment
+
+jobs:
+  pyrobench:
+    # This job only runs for pull request comments
+    name: PR comment
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.22
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22
+        id: go
+      - run: |
+          go run github.com/grafana/pyrobench@76d4c8c342d131e0d7ae1b84c2970b75ca74bf4d -v github-comment-hook --github-commenter
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
